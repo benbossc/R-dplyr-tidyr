@@ -12,3 +12,15 @@ Let's use the readr package to read external data into R, for this lesson we are
 library("readr")
 gapminder <- read_csv("data/gapminder_data.csv")
 ```
+
+```R
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  country = col_character(),
+  year = col_double(),
+  pop = col_double(),
+  continent = col_character(),
+  lifeExp = col_double(),
+  gdpPercap = col_double()
+)
+```
