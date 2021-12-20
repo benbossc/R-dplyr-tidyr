@@ -6,11 +6,9 @@ This tutorial is licensed under a <a href="http://creativecommons.org/licenses/b
 # Acknowledgements
 This lab is sourced from the The Software Carpentry <a href="https://swcarpentry.github.io/r-novice-gapminder/"> R for Reproducible Scientific Analysis </a> lesson material: Thomas Wright and Naupaka Zimmerman (eds): Software Carpentry: R for Reproducible Scientific Analysis. Version 2016.06, June 2016, https://github.com/swcarpentry/r-novice-gapminder, 10.5281/zenodo.57520.
 
+Let's use the readr package to read external data into R, for this lesson we are going to use the gapminder data.
+
 ```R
-#Placeholder
-View(Data)
-
-y <- c(1, 2, 3) # the function 'c' concatenates arguments separated by commas into a vector
-print(y)
-
+library("readr")
+gapminder <- read_csv("data/gapminder_data.csv")
 ```
