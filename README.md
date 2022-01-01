@@ -202,6 +202,7 @@ gdp_bycontinents <- gapminder %>%
 `summarise()` ungrouping output (override with `.groups` argument)
 ```
 <img src = "fig/R-Dataframe-Manipulation-dplyr-fig3.png">
+
 ```{r}
 # A tibble: 5 x 2
   continent mean_gdpPercap
@@ -212,15 +213,19 @@ gdp_bycontinents <- gapminder %>%
 4 Europe            14469.
 5 Oceania           18622.
 ```
+
 That allowed us to calculate the mean gdpPercap for each continent, but it gets even better.
+
 ## Question 2 
 
 The function group_by() allows us to group by multiple variables. Let’s group by year and continent.
+
 ```R
 gdp_bycontinents_byyear <- gapminder %>%
     group_by(continent, year) %>%
     summarize(mean_gdpPercap = mean(gdpPercap))
 ```
+
 ```{r}
 `summarise()` regrouping output by 'continent' (override with `.groups` argument)
 ```
