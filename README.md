@@ -146,6 +146,8 @@ year_country_gdp_euro <- gapminder %>%
 
 As with last time, first we pass the gapminder dataframe to the filter() function, then we pass the filtered version of the gapminder dataframe to the select() function. Note: The order of operations is very important in this case. If we used ‘select’ first, filter would not be able to find the variable continent since we would have removed it in the previous step.
 
+Please now write a command line (which can spans multiples lines by relying on piping) that produces a data frame with the following criteria: 1) Asia and Oceania; 2) values for ```year```, ```country```, ```population```, and  ```lifeExp```. How many rows did you end up getting and why? 
+
 # Using group_by() and summarize()
 
 Now, we were supposed to be reducing the error prone repetitiveness of what can be done with base R, but up to now we haven’t done that since we would have to repeat the above for each continent. Instead of filter(), which will only pass observations that meet your criteria (in the above: continent=="Europe"), we can use group_by(), which will essentially use every unique criteria that you could have used in filter.
