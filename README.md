@@ -311,6 +311,16 @@ gdp_future_bycontinents_byyear_high_lifeExp <- gapminder %>%
     summarize(mean_gdpPercap = mean(gdpPercap),
               mean_gdpPercap_expected = mean(gdp_futureExpectation))
 ```
+# Questions 3-4
+
+## Q3
+
+Which country and associated year has the shortest life expectacy? Which country and associated has the longest life expectancy? 
+
+## Q4
+
+Filter to only include years 1990-1999. Creates a new variable totalAvgLifeExp that is the cumulative average life expectancy. Summarizes the cumulative average cost of attendance by continent using the mean, median, and 90th percentile.
+
 # Other Sources
 • <a href="https://r4ds.had.co.nz/">R for Data Science</a>
 
