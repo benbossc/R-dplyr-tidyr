@@ -244,7 +244,7 @@ gdp_pop_bycontinents_byyear <- gapminder %>%
 `summarise()` regrouping output by 'continent' (override with `.groups` argument)
 ```
 
-Filter out European countries and calculate the average life expectancy per country. Which has the longest average life expectancy and which has the shortest average life expectancy? Which country/countries represents the median life expectancy (rounded to the whole number)?
+Only include non-European countries and calculate the average life expectancy per country. Which has the longest average life expectancy and which has the shortest average life expectancy? Which country/countries represent(s) the median life expectancy (rounded to the whole number)?
 
 # Using Using count()
 
@@ -315,11 +315,11 @@ gdp_future_bycontinents_byyear_high_lifeExp <- gapminder %>%
 
 ## Q3
 
-Which country and associated year has the shortest life expectacy? Which country and associated has the longest life expectancy? 
+Which European country and associated year has the shortest life expectacy? Which European country and associated has the longest life expectancy? 
 
 ## Q4
 
-Filter to only include years 1990-1999. Creates a new variable totalAvgLifeExp that is the cumulative average life expectancy. Summarizes the cumulative average cost of attendance by continent using the mean, median, and 90th percentile.
+Filter to only include years 1990-2010. Creates a new variable totalAvgLifeExp, grouped by continents, that includes: cumulative (as in, representative of 1990-2010) average life expectancy.
 
 # Other Sources
 • <a href="https://r4ds.had.co.nz/">R for Data Science</a>
