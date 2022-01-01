@@ -244,6 +244,8 @@ gdp_pop_bycontinents_byyear <- gapminder %>%
 `summarise()` regrouping output by 'continent' (override with `.groups` argument)
 ```
 
+Filter out European countries and calculate the average life expectancy per country. Which has the longest average life expectancy and which has the shortest average life expectancy? Which country/countries represents the median life expectancy (rounded to the whole number)?
+
 # Using Using count()
 
 A very common operation is to count the number of observations for each group. The dplyr package comes with a function that helps with this.
