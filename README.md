@@ -452,6 +452,169 @@ To change this very wide dataframe layout back to our nice, intermediate (or lon
 
 <img src = "fig/R-Dataframe-Manipulation-tidyr-fig3.png">
 
+```R
+gap_long <- gap_wide %>%
+  pivot_longer(
+    cols = pop_1952:gdpPercap_2007,
+    names_to = "obstype_year", values_to = "obs_values"
+  )
+gap_long
+```
+
+```{r}
+# A tibble: 5,112 x 4
+   continent country     obstype_year   obs_values
+   <chr>     <chr>       <chr>               <dbl>
+ 1 Asia      Afghanistan pop_1952        8425333  
+ 2 Asia      Afghanistan lifeExp_1952         28.8
+ 3 Asia      Afghanistan gdpPercap_1952      779. 
+ 4 Asia      Afghanistan pop_1957        9240934  
+ 5 Asia      Afghanistan lifeExp_1957         30.3
+ 6 Asia      Afghanistan gdpPercap_1957      821. 
+ 7 Asia      Afghanistan pop_1962       10267083  
+ 8 Asia      Afghanistan lifeExp_1962         32.0
+ 9 Asia      Afghanistan gdpPercap_1962      853. 
+10 Asia      Afghanistan pop_1967       11537966  
+# … with 5,102 more rows
+```
+
+Here we have used piping syntax which is similar to what we were doing in the previous lesson with dplyr. In fact, these are compatible and you can use a mix of tidyr and dplyr functions by piping them together.
+
+We first provide to ```pivot_longer()``` a vector of column names that will be pivoted into longer format. We could type out all the observation variables, but as in the ```select()``` function, we can use the ```:``` operator to select our desired variables. ```pivot_longer()``` also allows the alternative syntax of using the ```-``` symbol to identify which variables are not to be pivoted (i.e. ID variables).
+
+The next arguments to ```pivot_longer()``` are ```names_to``` for naming the column that will contain the new ID variable (```obstype_year```) and ```values_to``` for naming the new amalgamated observation variable (```obs_value```). We supply these new column names as strings.
+
+<img src = "fig/R-Dataframe-Manipulation-tidyr-fig4.png">
+
+```R
+gap_long <- gap_wide %>%
+  pivot_longer(
+    cols = c(-continent, -country),
+    names_to = "obstype_year", values_to = "obs_values"
+  )
+gap_long
+```
+
+```{r}
+# A tibble: 5,112 x 4
+   continent country     obstype_year   obs_values
+   <chr>     <chr>       <chr>               <dbl>
+ 1 Asia      Afghanistan pop_1952        8425333  
+ 2 Asia      Afghanistan lifeExp_1952         28.8
+ 3 Asia      Afghanistan gdpPercap_1952      779. 
+ 4 Asia      Afghanistan pop_1957        9240934  
+ 5 Asia      Afghanistan lifeExp_1957         30.3
+ 6 Asia      Afghanistan gdpPercap_1957      821. 
+ 7 Asia      Afghanistan pop_1962       10267083  
+ 8 Asia      Afghanistan lifeExp_1962         32.0
+ 9 Asia      Afghanistan gdpPercap_1962      853. 
+10 Asia      Afghanistan pop_1967       11537966  
+# … with 5,102 more rows
+```
+
+That may seem trivial with this particular dataframe, but sometimes you have 1 ID variable and 40 observation variables with irregular variable names. The flexibility is a huge time saver!
+
+Now ```obstype_year``` actually contains 2 pieces of information, the observation type (```pop```, ```lifeExp```, or ```gdpPercap```) and the year. We can use the ```separate()``` function to split the character strings into multiple variables
+
+## Question 5
+Using ```gap_long```, calculate the mean life expectancy, population, and gdpPercap for each continent. Hint: use the ```group_by()``` and ```summarize()``` functions we learned in the dplyr lesson
+
+# From long to intermediate format with pivot_wider()
+It is always good to check work. So, let’s use the second ```pivot``` function, ```pivot_wider()```, to ‘widen’ our observation variables back out. ```pivot_wider()``` is the opposite of ```pivot_longer()```, making a dataset wider by increasing the number of columns and decreasing the number of rows. We can use ```pivot_wider()``` to pivot or reshape our ```gap_long``` to the original intermediate format or the widest format. Let’s start with the intermediate format.
+
+The ```pivot_wider()``` function takes ```names_from``` and ```values_from``` arguments.
+
+To ```names_from``` we supply the column name whose contents will be pivoted into new output columns in the widened dataframe. The corresponding values will be added from the column named in the ```values_from``` argument.
+
+```R
+gap_normal <- gap_long %>%
+  pivot_wider(names_from = obs_type, values_from = obs_values)
+dim(gap_normal)
+```
+
+```{r}
+[1] 1704    6
+```
+
+```R
+dim(gapminder)
+```
+
+```{r}
+[1] 1704    6
+```
+
+```R
+names(gap_normal)
+```
+
+```{r}
+[1] "continent" "country"   "year"      "pop"       "lifeExp"   "gdpPercap"
+```
+
+```R
+names(gapminder)
+```
+
+```{r}
+[1] "country"   "year"      "pop"       "continent" "lifeExp"   "gdpPercap"
+```
+
+Now we’ve got an intermediate dataframe ```gap_normal``` with the same dimensions as the original ```gapminder```, but the order of the variables is different. Let’s fix that before checking if they are ```all.equal()```.
+
+```R
+gap_normal <- gap_normal %>% 
+    select(country, year, pop, continent, lifeExp, gdpPercap) 
+all_equal(gap_normal, gapminder)
+```
+
+```{r}
+[1] TRUE
+```
+
+```R
+gap_normal
+```
+
+```{r}
+# A tibble: 1,704 x 6
+   country      year      pop continent lifeExp gdpPercap
+   <chr>       <dbl>    <dbl> <chr>       <dbl>     <dbl>
+ 1 Afghanistan  1952  8425333 Asia         28.8      779.
+ 2 Afghanistan  1957  9240934 Asia         30.3      821.
+ 3 Afghanistan  1962 10267083 Asia         32.0      853.
+ 4 Afghanistan  1967 11537966 Asia         34.0      836.
+ 5 Afghanistan  1972 13079460 Asia         36.1      740.
+ 6 Afghanistan  1977 14880372 Asia         38.4      786.
+ 7 Afghanistan  1982 12881816 Asia         39.9      978.
+ 8 Afghanistan  1987 13867957 Asia         40.8      852.
+ 9 Afghanistan  1992 16317921 Asia         41.7      649.
+10 Afghanistan  1997 22227415 Asia         41.8      635.
+# … with 1,694 more rows
+```
+
+```R
+gapminder
+```
+
+```{r}
+# A tibble: 1,704 x 6
+   country      year      pop continent lifeExp gdpPercap
+   <chr>       <dbl>    <dbl> <chr>       <dbl>     <dbl>
+ 1 Afghanistan  1952  8425333 Asia         28.8      779.
+ 2 Afghanistan  1957  9240934 Asia         30.3      821.
+ 3 Afghanistan  1962 10267083 Asia         32.0      853.
+ 4 Afghanistan  1967 11537966 Asia         34.0      836.
+ 5 Afghanistan  1972 13079460 Asia         36.1      740.
+ 6 Afghanistan  1977 14880372 Asia         38.4      786.
+ 7 Afghanistan  1982 12881816 Asia         39.9      978.
+ 8 Afghanistan  1987 13867957 Asia         40.8      852.
+ 9 Afghanistan  1992 16317921 Asia         41.7      649.
+10 Afghanistan  1997 22227415 Asia         41.8      635.
+# … with 1,694 more rows
+```
+
+
 # Other Sources
 • <a href="https://r4ds.had.co.nz/">R for Data Science</a>
 
