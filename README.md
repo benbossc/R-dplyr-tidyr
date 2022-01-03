@@ -614,6 +614,157 @@ gapminder
 # … with 1,694 more rows
 ```
 
+We’re almost there, the original was sorted by ```country```, then ```year```.
+
+```R
+gap_normal <- gap_normal %>% arrange(country, year)
+all_equal(gap_normal, gapminder)
+```
+
+```{r}
+[1] TRUE
+```
+
+That’s great! We’ve gone from the longest format back to the intermediate and we didn’t introduce any errors in our code.
+
+Now let’s convert the long all the way back to the wide. In the wide format, we will keep country and continent as ID variables and pivot the observations across the 3 metrics (```pop```, ```lifeExp```, ```gdpPercap```) and time (```year```). First we need to create appropriate labels for all our new variables (time [times] metric combinations) and we also need to unify our ID variables to simplify the process of defining ```gap_wide```.
+
+```R
+gap_temp <- gap_long %>% unite(var_ID, continent, country, sep = "_")
+gap_temp
+```
+
+```{r}
+# A tibble: 5,112 x 4
+   var_ID           obs_type   year obs_values
+   <chr>            <chr>     <dbl>      <dbl>
+ 1 Asia_Afghanistan pop        1952  8425333  
+ 2 Asia_Afghanistan lifeExp    1952       28.8
+ 3 Asia_Afghanistan gdpPercap  1952      779. 
+ 4 Asia_Afghanistan pop        1957  9240934  
+ 5 Asia_Afghanistan lifeExp    1957       30.3
+ 6 Asia_Afghanistan gdpPercap  1957      821. 
+ 7 Asia_Afghanistan pop        1962 10267083  
+ 8 Asia_Afghanistan lifeExp    1962       32.0
+ 9 Asia_Afghanistan gdpPercap  1962      853. 
+10 Asia_Afghanistan pop        1967 11537966  
+# … with 5,102 more rows
+```
+
+```R
+gap_temp <- gap_long %>%
+    unite(ID_var, continent, country, sep = "_") %>%
+    unite(var_names, obs_type, year, sep = "_")
+gap_temp
+```
+
+```{r}
+# A tibble: 5,112 x 3
+   ID_var           var_names      obs_values
+   <chr>            <chr>               <dbl>
+ 1 Asia_Afghanistan pop_1952        8425333  
+ 2 Asia_Afghanistan lifeExp_1952         28.8
+ 3 Asia_Afghanistan gdpPercap_1952      779. 
+ 4 Asia_Afghanistan pop_1957        9240934  
+ 5 Asia_Afghanistan lifeExp_1957         30.3
+ 6 Asia_Afghanistan gdpPercap_1957      821. 
+ 7 Asia_Afghanistan pop_1962       10267083  
+ 8 Asia_Afghanistan lifeExp_1962         32.0
+ 9 Asia_Afghanistan gdpPercap_1962      853. 
+10 Asia_Afghanistan pop_1967       11537966  
+# … with 5,102 more rows
+```
+
+Using ```unite()``` we now have a single ID variable which is a combination of ```continent```, ```country```,and we have defined variable names. We’re now ready to pipe in ```pivot_wider()```
+
+```R
+gap_wide_new <- gap_long %>%
+  unite(ID_var, continent, country, sep = "_") %>%
+  unite(var_names, obs_type, year, sep = "_") %>%
+  pivot_wider(names_from = var_names, values_from = obs_values)
+gap_wide_new
+```
+
+```{r}
+# A tibble: 142 x 37
+   ID_var pop_1952 lifeExp_1952 gdpPercap_1952 pop_1957 lifeExp_1957
+   <chr>     <dbl>        <dbl>          <dbl>    <dbl>        <dbl>
+ 1 Asia_…  8425333         28.8           779.  9240934         30.3
+ 2 Europ…  1282697         55.2          1601.  1476505         59.3
+ 3 Afric…  9279525         43.1          2449. 10270856         45.7
+ 4 Afric…  4232095         30.0          3521.  4561361         32.0
+ 5 Ameri… 17876956         62.5          5911. 19610538         64.4
+ 6 Ocean…  8691212         69.1         10040.  9712569         70.3
+ 7 Europ…  6927772         66.8          6137.  6965860         67.5
+ 8 Asia_…   120447         50.9          9867.   138655         53.8
+ 9 Asia_… 46886859         37.5           684. 51365468         39.3
+10 Europ…  8730405         68            8343.  8989111         69.2
+# … with 132 more rows, and 31 more variables: gdpPercap_1957 <dbl>,
+#   pop_1962 <dbl>, lifeExp_1962 <dbl>, gdpPercap_1962 <dbl>, pop_1967 <dbl>,
+#   lifeExp_1967 <dbl>, gdpPercap_1967 <dbl>, pop_1972 <dbl>,
+#   lifeExp_1972 <dbl>, gdpPercap_1972 <dbl>, pop_1977 <dbl>,
+#   lifeExp_1977 <dbl>, gdpPercap_1977 <dbl>, pop_1982 <dbl>,
+#   lifeExp_1982 <dbl>, gdpPercap_1982 <dbl>, pop_1987 <dbl>,
+#   lifeExp_1987 <dbl>, gdpPercap_1987 <dbl>, pop_1992 <dbl>,
+#   lifeExp_1992 <dbl>, gdpPercap_1992 <dbl>, pop_1997 <dbl>,
+#   lifeExp_1997 <dbl>, gdpPercap_1997 <dbl>, pop_2002 <dbl>,
+#   lifeExp_2002 <dbl>, gdpPercap_2002 <dbl>, pop_2007 <dbl>,
+#   lifeExp_2007 <dbl>, gdpPercap_2007 <dbl>
+```
+
+## Question 6
+Take this 1 step further and create a ```gap_ludicrously_wide``` format data by pivoting over countries, year and the 3 metrics? Hint this new dataframe should only have 5 rows.
+
+Now we have a great ‘wide’ format dataframe, but the ```ID_var``` could be more usable, let’s separate it into 2 variables with ```separate()```
+
+```R
+gap_wide_betterID <- separate(gap_wide_new, ID_var, c("continent", "country"), sep="_")
+gap_wide_betterID <- gap_long %>%
+    unite(ID_var, continent, country, sep = "_") %>%
+    unite(var_names, obs_type, year, sep = "_") %>%
+    pivot_wider(names_from = var_names, values_from = obs_values) %>%
+    separate(ID_var, c("continent","country"), sep = "_")
+gap_wide_betterID
+```
+
+```{r}
+# A tibble: 142 x 38
+   continent country pop_1952 lifeExp_1952 gdpPercap_1952 pop_1957 lifeExp_1957
+   <chr>     <chr>      <dbl>        <dbl>          <dbl>    <dbl>        <dbl>
+ 1 Asia      Afghan…  8425333         28.8           779.  9240934         30.3
+ 2 Europe    Albania  1282697         55.2          1601.  1476505         59.3
+ 3 Africa    Algeria  9279525         43.1          2449. 10270856         45.7
+ 4 Africa    Angola   4232095         30.0          3521.  4561361         32.0
+ 5 Americas  Argent… 17876956         62.5          5911. 19610538         64.4
+ 6 Oceania   Austra…  8691212         69.1         10040.  9712569         70.3
+ 7 Europe    Austria  6927772         66.8          6137.  6965860         67.5
+ 8 Asia      Bahrain   120447         50.9          9867.   138655         53.8
+ 9 Asia      Bangla… 46886859         37.5           684. 51365468         39.3
+10 Europe    Belgium  8730405         68            8343.  8989111         69.2
+# … with 132 more rows, and 31 more variables: gdpPercap_1957 <dbl>,
+#   pop_1962 <dbl>, lifeExp_1962 <dbl>, gdpPercap_1962 <dbl>, pop_1967 <dbl>,
+#   lifeExp_1967 <dbl>, gdpPercap_1967 <dbl>, pop_1972 <dbl>,
+#   lifeExp_1972 <dbl>, gdpPercap_1972 <dbl>, pop_1977 <dbl>,
+#   lifeExp_1977 <dbl>, gdpPercap_1977 <dbl>, pop_1982 <dbl>,
+#   lifeExp_1982 <dbl>, gdpPercap_1982 <dbl>, pop_1987 <dbl>,
+#   lifeExp_1987 <dbl>, gdpPercap_1987 <dbl>, pop_1992 <dbl>,
+#   lifeExp_1992 <dbl>, gdpPercap_1992 <dbl>, pop_1997 <dbl>,
+#   lifeExp_1997 <dbl>, gdpPercap_1997 <dbl>, pop_2002 <dbl>,
+#   lifeExp_2002 <dbl>, gdpPercap_2002 <dbl>, pop_2007 <dbl>,
+#   lifeExp_2007 <dbl>, gdpPercap_2007 <dbl>
+```
+
+```R
+all_equal(gap_wide, gap_wide_betterID)
+```
+
+```{r}
+[1] TRUE
+```
+
+There and back again!
+
+
 
 # Other Sources
 • <a href="https://r4ds.had.co.nz/">R for Data Science</a>
@@ -621,5 +772,7 @@ gapminder
 • <a href="https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf">Data Wrangling Cheat sheet</a>
 
 • <a href="https://dplyr.tidyverse.org/">Introduction to dplyr</a>
- 
+
+• <a href="https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html">Introduction to tidyr</a>
+
 • <a href="https://www.rstudio.com/resources/webinars/data-wrangling-with-r-and-rstudio/">Data wrangling with R and RStudio</a>
