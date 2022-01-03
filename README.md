@@ -321,6 +321,137 @@ Which European country and associated year has the shortest life expectacy? Whic
 
 Filter to only include years 1990-2010. Creates a new variable totalAvgLifeExp, grouped by continents, that includes: cumulative (as in, representative of 1990-2010) average life expectancy.
 
+# Create Tidy Data with tidyr
+
+Let's now work with ```tidyr```. People who work with data often want to reshape their dataframes from ‘wide’ to ‘longer’ layouts, or vice-versa. The ‘long’ layout or format is where:
+
+1. each column is a variable
+2. each row is an observation
+
+In the purely ‘long’ (or ‘longest’) format, you usually have 1 column for the observed variable and the other columns are ID variables.
+
+For the ‘wide’ format each row is often a site/subject/patient and you have multiple observation variables containing the same type of data. These can be either repeated observations over time, or observation of multiple variables (or a mix of both). You may find data input may be simpler or some other applications may prefer the ‘wide’ format. However, many of ```R```‘s functions have been designed assuming you have ’longer’ formatted data. This tutorial will help you efficiently transform your data shape regardless of original format.
+
+<img src = "fig/R-Dataframe-Manipulation-tidyr-fig1.png">
+
+Long and wide dataframe layouts mainly affect readability. For humans, the wide format is often more intuitive since we can often see more of the data on the screen due to its shape. However, the long format is more machine readable and is closer to the formatting of databases. The ID variables in our dataframes are similar to the fields in a database and observed variables are like the database values.
+
+# Getting started with tidyr
+
+First install the packages if you haven’t already done so (including dplyr which should already be installed if you've done this lab in sequential order):
+
+```R
+#install.packages("tidyr")
+#install.packages("dplyr")
+```
+
+Load the packages
+```R
+library("tidyr")
+library("dplyr")
+library("readr")
+```
+
+First, lets look at the structure of our original gapminder dataframe:
+
+```R
+gapminder <- read_csv("data/gapminder_data.csv")
+```
+
+```{r}
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  country = col_character(),
+  year = col_double(),
+  pop = col_double(),
+  continent = col_character(),
+  lifeExp = col_double(),
+  gdpPercap = col_double()
+)
+```
+
+```R
+gapminder
+```
+
+```{r}
+# A tibble: 1,704 x 6
+   country      year      pop continent lifeExp gdpPercap
+   <chr>       <dbl>    <dbl> <chr>       <dbl>     <dbl>
+ 1 Afghanistan  1952  8425333 Asia         28.8      779.
+ 2 Afghanistan  1957  9240934 Asia         30.3      821.
+ 3 Afghanistan  1962 10267083 Asia         32.0      853.
+ 4 Afghanistan  1967 11537966 Asia         34.0      836.
+ 5 Afghanistan  1972 13079460 Asia         36.1      740.
+ 6 Afghanistan  1977 14880372 Asia         38.4      786.
+ 7 Afghanistan  1982 12881816 Asia         39.9      978.
+ 8 Afghanistan  1987 13867957 Asia         40.8      852.
+ 9 Afghanistan  1992 16317921 Asia         41.7      649.
+10 Afghanistan  1997 22227415 Asia         41.8      635.
+# … with 1,694 more rows
+```
+
+Sometimes, as with the gapminder dataset, we have multiple types of observed data. It is somewhere in between the purely ‘long’ and ‘wide’ data formats. We have 3 “ID variables” (```continent```, ```country```, ```year```) and 3 “Observation variables” (```pop```, ```lifeExp```, ```gdpPercap```). This intermediate format can be preferred despite not having ALL observations in 1 column given that all 3 observation variables have different units. There are few operations that would need us to make this dataframe any longer (i.e. 4 ID variables and 1 Observation variable).
+
+While using many of the functions in R, which are often vector based, you usually do not want to do mathematical operations on values with different units. For example, using the purely long format, a single mean for all of the values of population, life expectancy, and GDP would not be meaningful since it would return the mean of values with 3 incompatible units. The solution is that we first manipulate the data either by grouping (see the lesson on ```dplyr```), or we change the structure of the dataframe. Note: Some plotting functions in R actually work better in the wide format data.
+
+# From wide to long format with pivot_longer()
+
+Until now, we’ve been using the nicely formatted original gapminder dataset, but ‘real’ data (i.e. our own research data) will never be so well organized. Here let’s start with the wide formatted version of the gapminder dataset.
+
+We’ll load the data file and look at it.
+
+```R
+gap_wide <- read_csv("data/gapminder_wide.csv")
+```
+
+```{r}
+── Column specification ────────────────────────────────────────────────────────
+cols(
+  .default = col_double(),
+  continent = col_character(),
+  country = col_character()
+)
+ℹ Use `spec()` for the full column specifications.
+```
+
+```R
+gap_wide
+```
+
+```{r}
+# A tibble: 142 x 38
+   continent country pop_1952 lifeExp_1952 gdpPercap_1952 pop_1957 lifeExp_1957
+   <chr>     <chr>      <dbl>        <dbl>          <dbl>    <dbl>        <dbl>
+ 1 Asia      Afghan…  8425333         28.8           779.  9240934         30.3
+ 2 Europe    Albania  1282697         55.2          1601.  1476505         59.3
+ 3 Africa    Algeria  9279525         43.1          2449. 10270856         45.7
+ 4 Africa    Angola   4232095         30.0          3521.  4561361         32.0
+ 5 Americas  Argent… 17876956         62.5          5911. 19610538         64.4
+ 6 Oceania   Austra…  8691212         69.1         10040.  9712569         70.3
+ 7 Europe    Austria  6927772         66.8          6137.  6965860         67.5
+ 8 Asia      Bahrain   120447         50.9          9867.   138655         53.8
+ 9 Asia      Bangla… 46886859         37.5           684. 51365468         39.3
+10 Europe    Belgium  8730405         68            8343.  8989111         69.2
+# … with 132 more rows, and 31 more variables: gdpPercap_1957 <dbl>,
+#   pop_1962 <dbl>, lifeExp_1962 <dbl>, gdpPercap_1962 <dbl>, pop_1967 <dbl>,
+#   lifeExp_1967 <dbl>, gdpPercap_1967 <dbl>, pop_1972 <dbl>,
+#   lifeExp_1972 <dbl>, gdpPercap_1972 <dbl>, pop_1977 <dbl>,
+#   lifeExp_1977 <dbl>, gdpPercap_1977 <dbl>, pop_1982 <dbl>,
+#   lifeExp_1982 <dbl>, gdpPercap_1982 <dbl>, pop_1987 <dbl>,
+#   lifeExp_1987 <dbl>, gdpPercap_1987 <dbl>, pop_1992 <dbl>,
+#   lifeExp_1992 <dbl>, gdpPercap_1992 <dbl>, pop_1997 <dbl>,
+#   lifeExp_1997 <dbl>, gdpPercap_1997 <dbl>, pop_2002 <dbl>,
+#   lifeExp_2002 <dbl>, gdpPercap_2002 <dbl>, pop_2007 <dbl>,
+#   lifeExp_2007 <dbl>, gdpPercap_2007 <dbl>
+```
+
+<img src = "fig/R-Dataframe-Manipulation-tidyr-fig2.png">
+
+To change this very wide dataframe layout back to our nice, intermediate (or longer) layout, we will use one of the two available ```pivot``` functions from the ```tidyr``` package. To convert from wide to a longer format, we will use the ```pivot_longer()``` function. ```pivot_longer()``` makes datasets longer by increasing the number of rows and decreasing the number of columns, or ‘lengthening’ your observation variables into a single variable.
+
+<img src = "fig/R-Dataframe-Manipulation-tidyr-fig3.png">
+
 # Other Sources
 • <a href="https://r4ds.had.co.nz/">R for Data Science</a>
 
