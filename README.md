@@ -516,6 +516,11 @@ That may seem trivial with this particular dataframe, but sometimes you have 1 I
 
 Now ```obstype_year``` actually contains 2 pieces of information, the observation type (```pop```, ```lifeExp```, or ```gdpPercap```) and the year. We can use the ```separate()``` function to split the character strings into multiple variables
 
+```R
+gap_long <- gap_long %>% separate(obstype_year,into=c('obs_type','year'),sep="_")
+gap_long$year <- as.integer(gap_long$year)
+```
+
 ## Question 5
 Using ```gap_long```, calculate the mean life expectancy, population, and gdpPercap for each continent. Hint: use the ```group_by()``` and ```summarize()``` functions we learned in the dplyr lesson
 
