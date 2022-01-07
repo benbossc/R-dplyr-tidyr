@@ -4,7 +4,76 @@
 This tutorial is licensed under a <a href="http://creativecommons.org/licenses/by-nc/4.0/" rel="license">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
 
 # Acknowledgements
-This lab is sourced from the The Software Carpentry <a href="https://swcarpentry.github.io/r-novice-gapminder/"> R for Reproducible Scientific Analysis </a> lesson material: Thomas Wright and Naupaka Zimmerman (eds): Software Carpentry: R for Reproducible Scientific Analysis. Version 2016.06, June 2016, https://github.com/swcarpentry/r-novice-gapminder, 10.5281/zenodo.57520.
+This lab is sourced from the The Software Carpentry <a href="https://swcarpentry.github.io/r-novice-gapminder/"> "R for Reproducible Scientific Analysis" </a> lesson material: Thomas Wright and Naupaka Zimmerman (eds): Software Carpentry: R for Reproducible Scientific Analysis. Version 2016.06, June 2016, https://github.com/swcarpentry/r-novice-gapminder, 10.5281/zenodo.57520. The introductory text/content about tidy data is derived from Dr. Katherine Walden's <a href="https://swcarpentry.github.io/r-novice-gapminder/"> "Introduction to Tidy Data in R." </a>
+
+# Setting the Stage: Tidy Data
+
+Hadley Wickham's 2014 article in the Journal of Statistical Software outlines the foundations and principles of tidy data.
+
+Article abstract: "Article abstract: "A huge amount of effort is spent cleaning data to get it ready for analysis, but there has been little research on how to make data cleaning as easy and effective as possible. This paper tackles a small, but important, component of data cleaning: data tidying. Tidy datasets are easy to manipulate, model and visualize, and have a specific structure: each variable is a column, each observation is a row, and each type of observational unit is a table. This framework makes it easy to tidy messy datasets because only a small set of tools are needed to deal with a wide range of un-tidy datasets. This structure also makes it easier to develop tidy tools for data analysis, tools that both input and output tidy datasets. The advantages of a consistent data structure and matching tools are demonstrated with a case study free from mundane data manipulation chores." (Hadley Wickham, Tidy Data, Vol. 59, Issue 10, Sep 2014, Journal of Statistical Software. http://www.jstatsoft.org/v59/i10.)"
+
+Wickham's tidy data principles have become widely used in data science and other statistical software applications. The ethos tidy data is aligned with making data machine readable, which is a major component of open government data. Making data tidy also aligns with best practices associated with research data management and making data FAIR (Findable, Accessible, Interoperable, and Reusable).
+
+# Some Tidy Data Principles
+
+1. Designing spreadsheets that are “tidy, consistent, and as resistant to mistakes as possible”
+
+2. Be Consistent:
+- Use consistent codes for categorical variables
+- Use a consistent fixed code for any missing values
+- Use consistent variable names
+- Use consistent subject identifiers
+- Use a consistent data layout in multiple files
+- Use consistent file names
+- Use a consistent format for all dates
+- Use consistent phrases in your notes
+- Be careful about extra spaces within cells
+
+3. Choose Good Names for Things:
+- Avoid spaces
+- Avoid special characters
+- Be short but meaningful
+
+4. Write Dates as YYYY-MM-DD
+- Or have separate columns for YEAR, MONTH, DATE
+
+5. No Empty Cells
+
+6. Put Just One Thing in a Cell
+
+7. Make it a Rectangle
+- Single first row with variable names
+
+8. Create a Data Dictionary
+- Esentially METADATA!!! An important component of FAIR Open Government Data.
+- “This is part of the metadata that you will want to prepare: information about the data” 
+- You might also find this information in a codebook that goes with a dataset
+- Things to include:
+  - The exact variable name as in the data file
+  - A version of the variable name that might be used in data visualizations
+  - A longer explanation of what the variable means
+  - The measurement units
+  - Expected minimum and maximum values
+
+9. No Calculations in the Raw Data Files
+
+10. Do Not Use Font Color or Highlighting as Data
+
+11. Make Backups
+- Multiple locations (OneDrive, local computer, etc.)
+- Version control program (i.e. Git)
+- Write protect the file when not entering data
+
+12. Use Data Validation to Avoid Errors
+
+13. Save a Copy of the Data in Plain Text Files
+- File formats can include comma-separated values (CSV) or plain-text (TXT)
+
+# Common Formatting Issues
+Check out the <a href="https://swcarpentry.github.io/r-novice-gapminder/"> "formatting issues" page </a> of the Tidy data for librarians Carpentries webpage for a list of common spreadsheet problems.
+
+# Question 1
+What questions do you have about these principles? Which ones are unclear are confusing?
 
 # Setting Things Up
 
@@ -13,6 +82,7 @@ Let's use the readr package to read external data into R, for this lesson we are
 ```R
 library("readr")
 gapminder <- read_csv("data/gapminder_data.csv")
+# Friendly reminder: remember, the above code assumes that you've placed gapminder_data.csv in the "data" folder of your working directory.
 ```
 
 ```{r}
@@ -142,7 +212,7 @@ year_country_gdp_euro <- gapminder %>%
     filter(continent == "Europe") %>%
     select(year, country, gdpPercap)
 ```
-## Question 1
+## Question 2
 
 As with last time, first we pass the gapminder dataframe to the filter() function, then we pass the filtered version of the gapminder dataframe to the select() function. Note: The order of operations is very important in this case. If we used ‘select’ first, filter would not be able to find the variable continent since we would have removed it in the previous step.
 
@@ -218,7 +288,7 @@ gdp_bycontinents <- gapminder %>%
 
 That allowed us to calculate the mean gdpPercap for each continent, but it gets even better.
 
-## Question 2 
+## Question 3 
 
 The function group_by() allows us to group by multiple variables. Let’s group by year and continent.
 
@@ -311,13 +381,13 @@ gdp_future_bycontinents_byyear_high_lifeExp <- gapminder %>%
     summarize(mean_gdpPercap = mean(gdpPercap),
               mean_gdpPercap_expected = mean(gdp_futureExpectation))
 ```
-# Questions 3-4
+# Questions 4-5
 
-## Q3
+## Q4
 
 Which European country and associated year has the shortest life expectacy? Which European country and associated has the longest life expectancy? 
 
-## Q4
+## Q5
 
 Filter to only include years 1990-2010. Creates a new variable totalAvgLifeExp, grouped by continents, that includes: cumulative (as in, representative of 1990-2010) average life expectancy.
 
@@ -521,7 +591,7 @@ gap_long <- gap_long %>% separate(obstype_year,into=c('obs_type','year'),sep="_"
 gap_long$year <- as.integer(gap_long$year)
 ```
 
-## Question 5
+## Question 6
 Using ```gap_long```, calculate the mean life expectancy, population, and gdpPercap for each continent. Hint: use the ```group_by()``` and ```summarize()``` functions we learned in the dplyr lesson
 
 # From long to intermediate format with pivot_wider()
@@ -717,10 +787,17 @@ gap_wide_new
 #   lifeExp_2007 <dbl>, gdpPercap_2007 <dbl>
 ```
 
-## Question 6
-Take this 1 step further and create a ```gap_ludicrously_wide``` format data by pivoting over countries, year and the 3 metrics? Hint this new dataframe should only have 5 rows.
+You can take this 1 step further and create a ```gap_ludicrously_wide``` format data by pivoting over countries, year and the 3 metrics.
 
-Now we have a great ‘wide’ format dataframe, but the ```ID_var``` could be more usable, let’s separate it into 2 variables with ```separate()```
+```R
+gap_ludicrously_wide <- gap_long %>%
+   unite(var_names, obs_type, year, country, sep = "_") %>%
+   pivot_wider(names_from = var_names, values_from = obs_values)
+```
+
+Let's now return to the ```gap_wide_new``` object we created before ```gap_ludicrously_wide```
+
+Notice how we have a great ‘wide’ format dataframe. However, the ```ID_var``` could be more usable... so let’s separate it into 2 variables with ```separate()```
 
 ```R
 gap_wide_betterID <- separate(gap_wide_new, ID_var, c("continent", "country"), sep="_")
@@ -769,8 +846,8 @@ all_equal(gap_wide, gap_wide_betterID)
 
 There and back again!
 
-# Question 6
-The file HospitalAdmits.csv (available at the url “”) examines general reasons for people being hospitalized in the financial years ranging from July 1993 to June 1998. The variable “Separations” describes how many patient discharges occured in that year, while the variable “PatientDays” describes how many days in total patients spent in the hospital for that reason.
+# Question 7
+The file GenHos_Admits.csv (available at the url “https://raw.githubusercontent.com/benbossc/R-dplyr-tidyr/main/data/GenHos_Admits.csv”) examines general reasons for people being hospitalized in the financial years ranging from July 1993 to June 1998. The variable “Separations” describes how many patient discharges occured in that year, while the variable “PatientDays” describes how many days in total patients spent in the hospital for that reason.
 
 - Briefly explain why it is not considered to be tidy data and what changes need to be made to tidy it. 
 - Use ```separate()``` and ```pivot_longer()``` to create a tidy data set with columns ```IcdCode```, ```IcdText```, ```Year```, ```Field```, and ```Count```. The ```IcdCode``` is the numeric component of ```IcdChapter``` (Hint: pay attention to variable types, you might need to manipulate variable types using the ```as.numeric function``` and/or ```as.character functions()```). Please also use remove "FY" in the ```Year``` column (Hint: Consider using a function like ```gsub()```).  
