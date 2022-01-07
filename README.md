@@ -1,4 +1,4 @@
-# R: Dataframe Manipulation with dplyr
+# R: Dataframe Manipulation with dplyr and tidyr
 
 <a href="http://creativecommons.org/licenses/by-nc/4.0/" rel="license"><img style="border-width: 0;" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" alt="Creative Commons License" /></a>
 This tutorial is licensed under a <a href="http://creativecommons.org/licenses/by-nc/4.0/" rel="license">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
@@ -770,7 +770,7 @@ all_equal(gap_wide, gap_wide_betterID)
 There and back again!
 
 # Question 6
-The file HospitalAdmits.csv (available at the url “https://remiller1450.github.io/data/HospitalAdmits.csv”) examines general reasons for people being hospitalized in the financial years ranging from July 1993 to June 1998. The variable “Separations” describes how many patient discharges occured in that year, while the variable “PatientDays” describes how many days in total patients spent in the hospital for that reason.
+The file HospitalAdmits.csv (available at the url “”) examines general reasons for people being hospitalized in the financial years ranging from July 1993 to June 1998. The variable “Separations” describes how many patient discharges occured in that year, while the variable “PatientDays” describes how many days in total patients spent in the hospital for that reason.
 
 - Briefly explain why it is not considered to be tidy data and what changes need to be made to tidy it. 
 - Use ```separate()``` and ```pivot_longer()``` to create a tidy data set with columns ```IcdCode```, ```IcdText```, ```Year```, ```Field```, and ```Count```. The ```IcdCode``` is the numeric component of ```IcdChapter``` (Hint: pay attention to variable types, you might need to manipulate variable types using the ```as.numeric function``` and/or ```as.character functions()```). Please also use remove "FY" in the ```Year``` column (Hint: Consider using a function like ```gsub()```).  
