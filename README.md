@@ -385,11 +385,11 @@ gdp_future_bycontinents_byyear_high_lifeExp <- gapminder %>%
 
 ## Q4
 
-Which European country and associated year has the shortest life expectacy? Which European country and associated has the longest life expectancy? 
+Figure out the the average life expectancy per European country. Which European country has the longest average life expectancy? And which European country has the shortest average life expectancy?
 
 ## Q5
 
-Filter to only include years 1990-2010. Creates a new variable totalAvgLifeExp, grouped by continents, that includes: cumulative (as in, representative of 1990-2010) average life expectancy.
+Create a new variable totalAvgLifeExp from gapminder, grouped by continents, that includes: cumulative average life expectancy. Also make sure that totalAvLifeExp only incoporates years 1990-2010 (in other words, when you're calculating cumulative average life expectancy, you only care about the 1990-2010 range). 
 
 # Create Tidy Data with tidyr
 
