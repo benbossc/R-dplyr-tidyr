@@ -381,13 +381,7 @@ gdp_future_bycontinents_byyear_high_lifeExp <- gapminder %>%
     summarize(mean_gdpPercap = mean(gdpPercap),
               mean_gdpPercap_expected = mean(gdp_futureExpectation))
 ```
-# Questions 4-5
-
-## Q4
-
-Figure out the the average life expectancy per European country. Which European country has the longest average life expectancy? And which European country has the shortest average life expectancy?
-
-## Q5
+## Question 4
 
 Create a new variable totalAvgLifeExp from gapminder, grouped by continents, that includes: cumulative average life expectancy. Also make sure that totalAvLifeExp only incoporates years 1990-2010 (in other words, when you're calculating cumulative average life expectancy, you only care about the 1990-2010 range). 
 
@@ -591,7 +585,7 @@ gap_long <- gap_long %>% separate(obstype_year,into=c('obs_type','year'),sep="_"
 gap_long$year <- as.integer(gap_long$year)
 ```
 
-## Question 6
+## Question 5
 Using ```gap_long```, calculate the mean life expectancy, population, and gdpPercap for each continent. Hint: use the ```group_by()``` and ```summarize()``` functions we learned in the dplyr lesson
 
 # From long to intermediate format with pivot_wider()
@@ -846,7 +840,7 @@ all_equal(gap_wide, gap_wide_betterID)
 
 There and back again!
 
-# Question 7
+# Question 6
 The file GenHos_Admits.csv (available at the url “https://raw.githubusercontent.com/benbossc/R-dplyr-tidyr/main/data/GenHos_Admits.csv”) examines general reasons for people being hospitalized in the financial years ranging from July 1993 to June 1998. The variable “Separations” describes how many patient discharges occured in that year, while the variable “PatientDays” describes how many days in total patients spent in the hospital for that reason.
 
 - Briefly explain why it is not considered to be tidy data and what changes need to be made to tidy it. 
