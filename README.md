@@ -314,7 +314,7 @@ gdp_pop_bycontinents_byyear <- gapminder %>%
 `summarise()` regrouping output by 'continent' (override with `.groups` argument)
 ```
 
-Only include non-European countries and calculate the average life expectancy per country. Which has the longest average life expectancy and which has the shortest average life expectancy? Which country/countries represent(s) the median life expectancy (rounded to the whole number)?
+Only include non-European countries and calculate the average life expectancy per country. Which has the longest average life expectancy and which has the shortest average life expectancy?
 
 # Using Using count()
 
